@@ -1,43 +1,30 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    queryInterface.createTable('users', {
+    await queryInterface.createTable('blacklisted_tokens', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
         allowNull: false,
       },
-      name: {
+      token: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      password: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      password_reset_token: {
-        type: Sequelize.STRING,
-      },
-      password_token_expires_at: {
-        type: Sequelize.DATE,
+      user_id: {
+        type: Sequelize.UUID,
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
       },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable('blacklisted_tokens');
   },
 };

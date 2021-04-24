@@ -1,3 +1,4 @@
+/* eslint-disable implicit-arrow-linebreak */
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
