@@ -1,8 +1,6 @@
+const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const { Model } = require('sequelize');
-const jwt = require('jsonwebtoken');
-
-const secret = process.env.JWT_SECRET;
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -35,6 +33,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      password_reset_token: {
+        type: DataTypes.STRING,
+      },
+      password_token_expires_at: {
+        type: DataTypes.DATE,
+      },
     },
     {
       sequelize,
@@ -65,23 +69,34 @@ module.exports = (sequelize, DataTypes) => {
     return bcrypt.hash(this.password, saltRounds);
   };
 
-  User.prototype.generateAccessToken = function generateAccessToken() {
-    return jwt.sign({ id: this.id }, secret, {
-      expiresIn: '1d',
-    });
-  };
-
   User.prototype.toJSON = function toJSON() {
     const values = { ...this.get() };
 
     delete values.password;
     delete values.createdAt;
     delete values.updatedAt;
+    delete values.password_reset_token;
+    delete values.password_token_expires_at;
+
     return values;
   };
 
   User.prototype.validatePassword = function validatePassword(password) {
     return bcrypt.compareSync(password, this.password);
+  };
+
+  User.prototype.generatePasswordResetToken = async function generatePasswordResetToken() {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    this.password_reset_token = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+
+    this.password_token_expires_at = Date.now() + 30 * 60 * 1000;
+
+    await this.save();
+    return resetToken;
   };
 
   return User;

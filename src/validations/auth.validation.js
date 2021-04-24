@@ -34,7 +34,9 @@ module.exports = {
       .trim()
       .not()
       .isEmpty()
-      .withMessage('email is required'),
+      .withMessage('email is required')
+      .isEmail()
+      .withMessage('Enter a valid email address'),
 
     check('password')
       .trim()
@@ -43,5 +45,43 @@ module.exports = {
       .withMessage('This field is required')
       .isLength({ min: 8 })
       .withMessage('Password should be between at least 8 characters'),
+  ],
+
+  resetPasswordSchema: [
+    check('email')
+      .trim()
+      .not()
+      .isEmpty()
+      .withMessage('email is required')
+      .isEmail()
+      .withMessage('Enter a valid email address'),
+  ],
+
+  updatePasswordSchema: [
+    check('password')
+      .trim()
+      .not()
+      .isEmpty({ ignore_whitespace: true })
+      .withMessage('This field is required')
+      .isLength({ min: 8 })
+      .withMessage('Password should be between at least 8 characters'),
+  ],
+
+  changePasswordSchema: [
+    check('oldPassword')
+      .trim()
+      .not()
+      .isEmpty({ ignore_whitespace: true })
+      .withMessage('This field is required')
+      .isLength({ min: 8 })
+      .withMessage('Old password should be between at least 8 characters'),
+
+    check('newPassword')
+      .trim()
+      .not()
+      .isEmpty({ ignore_whitespace: true })
+      .withMessage('This field is required')
+      .isLength({ min: 8 })
+      .withMessage('New password should be between at least 8 characters'),
   ],
 };
