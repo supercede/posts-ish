@@ -43,21 +43,40 @@ module.exports = (sequelize, DataTypes) => {
     },
   );
 
+  User.beforeCreate(async user => {
+    user.password = await user.generatePasswordHash();
+  });
+
+  User.beforeUpdate(async user => {
+    if (user.changed('password')) {
+      user.password = await user.generatePasswordHash();
+    }
+  });
+
+  User.getExistinguser = async (queryString, column = 'email') => {
+    const userData = await User.findOne({
+      where: { [column]: queryString },
+    });
+    return userData;
+  };
+
   User.prototype.generatePasswordHash = async function generatePasswordHash() {
     const saltRounds = +process.env.SALT;
     return bcrypt.hash(this.password, saltRounds);
   };
 
-  User.prototype.generateAccessToken = function () {
+  User.prototype.generateAccessToken = function generateAccessToken() {
     return jwt.sign({ id: this.id }, secret, {
       expiresIn: '1d',
     });
   };
 
-  User.prototype.toJSON = function () {
+  User.prototype.toJSON = function toJSON() {
     const values = { ...this.get() };
 
     delete values.password;
+    delete values.createdAt;
+    delete values.updatedAt;
     return values;
   };
 

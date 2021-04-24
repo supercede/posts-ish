@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('combined', { stream: winston.stream }));
 
-app.use('/api/v1', routes);
+app.use('/api', routes);
 
 app.get('/', (_, response) => {
   response.status(200).json({
