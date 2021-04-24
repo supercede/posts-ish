@@ -1,8 +1,7 @@
 const { Model } = require('sequelize');
-const slugify = require('slugify');
 
 module.exports = (sequelize, DataTypes) => {
-  class Post extends Model {
+  class Photo extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -10,17 +9,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Post.belongsTo(models.User, {
+      Photo.belongsTo(models.User, {
         foreignKey: 'user_id',
       });
-      Post.hasMany(models.Photo, {
+
+      Photo.belongsTo(models.Post, {
         foreignKey: 'post_id',
-        onDelete: 'cascade',
-        hooks: true,
       });
     }
   }
-  Post.init(
+  Photo.init(
     {
       id: {
         type: DataTypes.UUID,
@@ -28,20 +26,13 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         allowNull: false,
       },
-      title: {
+      image_url: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      body: {
-        type: DataTypes.TEXT,
+      post_id: {
+        type: DataTypes.UUID,
         allowNull: false,
-      },
-      date: {
-        type: DataTypes.DATE,
-        allowNull: false,
-      },
-      slug: {
-        type: DataTypes.STRING,
       },
       user_id: {
         type: DataTypes.UUID,
@@ -50,24 +41,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: 'Post',
-      tableName: 'posts',
+      modelName: 'Photo',
+      tableName: 'photos',
     },
   );
-
-  Post.beforeCreate(async post => {
-    console.log(post);
-    post.slug = slugify(`${post.title} ${post.id}`);
-  });
-
-  Post.prototype.toJSON = function toJSON() {
-    const values = { ...this.get() };
-
-    delete values.createdAt;
-    delete values.updatedAt;
-
-    return values;
-  };
-
-  return Post;
+  return Photo;
 };
