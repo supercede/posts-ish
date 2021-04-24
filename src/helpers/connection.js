@@ -1,3 +1,4 @@
+const deleteImage = require('./deleteImage');
 const Email = require('./email');
 const RabbitMQ = require('./rabbitmq');
 const subscriber = require('./rabbitmq');
@@ -24,6 +25,16 @@ module.exports = {
       async msg => {
         const { user, resetURL } = JSON.parse(msg.content.toString());
         await new Email(user, { url: resetURL }).sendPasswordResetMail();
+        subscriber.acknowledgeMessage(msg);
+      },
+      3,
+    );
+
+    subscriber.consume(
+      'DELETE_IMAGE_URL',
+      async msg => {
+        const url = msg.content.toString();
+        await deleteImage(url);
         subscriber.acknowledgeMessage(msg);
       },
       3,
