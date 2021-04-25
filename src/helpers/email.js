@@ -75,7 +75,6 @@ class Email {
       };
 
       // Create transport and send mail
-      // await this.createNewTransport().sendMail(mailOptions);
       const transporter = await this.createNewTransport();
       await transporter.sendMail(mailOptions);
     } catch (err) {

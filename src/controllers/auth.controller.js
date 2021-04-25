@@ -75,6 +75,16 @@ module.exports = {
     });
   },
 
+  /**
+   * @function logout
+   * @description Handles user logout
+   *
+   *
+   * @param {Object} request - The request object to the server
+   * @param {Object} response - express response object
+   *
+   * @returns {Object} - response object
+   */
   logout: async (request, response) => {
     const authHeader = request.headers.authorization;
     const token = authHeader.split(' ')[1];
@@ -118,7 +128,16 @@ module.exports = {
       message: 'Password reset email sent successfully',
     });
   },
-  // resetPassword: {},
+
+  /**
+   * @function updatePassword
+   * @description handles update password request for user
+   *
+   * @param {Object} request - the request object
+   * @param {Object} response - the response object
+   *
+   * @returns {Object} - the response object
+   */
   updatePassword: async (request, response) => {
     const hashedToken = crypto
       .createHash('sha256')
@@ -151,6 +170,16 @@ module.exports = {
     });
   },
 
+  /**
+   * @function changePassword
+   * @description allows user to change
+   * their password
+   *
+   * @param {Object} request - the request object
+   * @param {Object} response - the response object
+   *
+   * @returns {Object} response object
+   */
   changePassword: async (request, response) => {
     const { id } = request.user;
     const { oldPassword, newPassword } = request.body;
