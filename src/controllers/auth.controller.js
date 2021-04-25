@@ -112,7 +112,7 @@ module.exports = {
 
     const user = await User.getExistinguser(email);
 
-    if (!user) throw new NotFoundError();
+    if (!user) throw new NotFoundError('Email not found');
 
     const resetToken = await user.generatePasswordResetToken();
 
@@ -124,7 +124,7 @@ module.exports = {
 
     return response.status(200).json({
       status: 'success',
-      // data: { resetURL },
+      ...(process.env.NODE_ENV === 'test' && { result: resetToken }),
       message: 'Password reset email sent successfully',
     });
   },
