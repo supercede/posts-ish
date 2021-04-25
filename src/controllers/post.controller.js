@@ -7,6 +7,15 @@ const pagination = require('../helpers/pagination');
 const { User, Post, Photo } = models;
 
 module.exports = {
+  /**
+   * @function createPost
+   * @description controller to create post
+   *
+   * @param {Object} request - the request object
+   * @param {Object} response - the response object
+   *
+   * @returns {Object} response object
+   */
   createPost: async (request, response) => {
     const { title, body } = request.body;
 
@@ -39,6 +48,16 @@ module.exports = {
     });
   },
 
+  /**
+   * @function getPosts
+   * @description controller for getting all posts
+   *
+   *
+   * @param {Object} request - express request object
+   * @param {Object} response - express response object
+   *
+   * @returns {Object} - express response object
+   */
   getPosts: async (request, response) => {
     const { page = 1, limit = 20, sort } = request.query;
 
@@ -62,6 +81,16 @@ module.exports = {
     });
   },
 
+  /**
+   * @function getUserPost
+   * @description controller for getting a particular user's posts
+   *
+   *
+   * @param {Object} request - express request object
+   * @param {Object} response - express response object
+   *
+   * @returns {Object} - express response object
+   */
   getUserPosts: async (request, response) => {
     const { id } = request.params;
     const user = await User.findByPk(id);
@@ -94,6 +123,16 @@ module.exports = {
     });
   },
 
+  /**
+   * @function getSinglePost
+   * @description controller for getting a post by its slug
+   *
+   *
+   * @param {Object} request - express request object
+   * @param {Object} response - express response object
+   *
+   * @returns {Object} - express response object
+   */
   getSinglePost: async (request, response) => {
     const { slug } = request.params;
     const post = await Post.findOne({
@@ -114,6 +153,16 @@ module.exports = {
     });
   },
 
+  /**
+   * @function updatePost
+   * @description controller for updating posts by slug
+   *
+   *
+   * @param {Object} request - express request object
+   * @param {Object} response - express response object
+   *
+   * @returns {Object} - express response object
+   */
   updatePost: async (request, response) => {
     const { slug } = request.params;
     const { title, body } = request.body;
@@ -157,6 +206,16 @@ module.exports = {
     });
   },
 
+  /**
+   * @function deletePost
+   * @description controller for deleting posts by slug
+   *
+   *
+   * @param {Object} request - express request object
+   * @param {Object} response - express response object
+   *
+   * @returns {Object} - express response object
+   */
   deletePost: async (request, response) => {
     const { slug } = request.params;
 

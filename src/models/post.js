@@ -56,7 +56,6 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Post.beforeCreate(async post => {
-    console.log(post);
     post.slug = slugify(`${post.title} ${post.id}`);
   });
 

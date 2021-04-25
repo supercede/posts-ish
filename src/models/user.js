@@ -67,6 +67,16 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
+  /**
+   * Get existing user
+   *
+   * @memberof User
+   *
+   * @param {string} queryString - string to sort in the database
+   * @param {string} column - column to search
+   *
+   * @returns {Object | void} - details of existing user
+   */
   User.getExistinguser = async (queryString, column = 'email') => {
     const userData = await User.findOne({
       where: { [column]: queryString },
@@ -74,6 +84,15 @@ module.exports = (sequelize, DataTypes) => {
     return userData;
   };
 
+  /**
+   * Encrypts user password
+   *
+   * @memberof User
+   *
+   * @param {Object} user
+   *
+   * @returns {String} hashed password
+   */
   User.prototype.generatePasswordHash = async function generatePasswordHash() {
     const saltRounds = +process.env.SALT;
     return bcrypt.hash(this.password, saltRounds);
@@ -91,10 +110,28 @@ module.exports = (sequelize, DataTypes) => {
     return values;
   };
 
+  /**
+   * Compares user password to hashed password
+   *
+   * @static
+   * @memberof User
+   *
+   * @param {string} password
+   *
+   * @returns {boolean} true or false
+   */
   User.prototype.validatePassword = function validatePassword(password) {
     return bcrypt.compareSync(password, this.password);
   };
 
+  /**
+   * Compare user jwt with time password was changed
+   *
+   * @memberof User
+   *
+   *
+   * @returns {Boolean}
+   */
   User.prototype.checkLastPasswordChange = function checkLastPasswordChange(
     jwtTimestamp,
   ) {
@@ -107,6 +144,14 @@ module.exports = (sequelize, DataTypes) => {
     return false;
   };
 
+  /**
+   * Generate password reset token for a user
+   *
+   * @memberof User
+   *
+   *
+   * @returns {string} password reset token
+   */
   User.prototype.generatePasswordResetToken = async function generatePasswordResetToken() {
     const resetToken = crypto.randomBytes(32).toString('hex');
 
