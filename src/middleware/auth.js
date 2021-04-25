@@ -17,7 +17,7 @@ module.exports = {
    * @param {Object} response - express response object
    * @param {Function} next
    *
-   * @returns {void} - undefined
+   * @returns {next} - the express next function
    */
   verifyToken: catchAsync(async (request, response, next) => {
     const authHeader = request.headers.authorization;
@@ -48,10 +48,14 @@ module.exports = {
     // Verify Token
     const decoded = await promisify(jwt.verify)(token, JWT_SECRET);
 
-    // Check if user exists
     const currentUser = await User.findByPk(decoded.id);
     if (!currentUser) {
-      return next(new ApplicationError(403, 'Invalid Token'));
+      throw new ApplicationError(403, 'Invalid Token');
+    }
+
+    // check if current JWT was created after last password change
+    if (currentUser.checkLastPasswordChange(decoded.iat)) {
+      throw new ApplicationError(403, 'Invalid Token');
     }
 
     request.user = currentUser;
