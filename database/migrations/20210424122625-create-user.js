@@ -25,6 +25,9 @@ module.exports = {
       password_token_expires_at: {
         type: Sequelize.DATE,
       },
+      password_last_changed: {
+        type: Sequelize.DATE,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

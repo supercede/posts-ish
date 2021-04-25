@@ -45,6 +45,9 @@ module.exports = (sequelize, DataTypes) => {
       password_token_expires_at: {
         type: DataTypes.DATE,
       },
+      password_last_changed: {
+        type: DataTypes.DATE,
+      },
     },
     {
       sequelize,
@@ -60,6 +63,7 @@ module.exports = (sequelize, DataTypes) => {
   User.beforeUpdate(async user => {
     if (user.changed('password')) {
       user.password = await user.generatePasswordHash();
+      user.password_last_changed = Date.now() - 1000;
     }
   });
 
@@ -89,6 +93,18 @@ module.exports = (sequelize, DataTypes) => {
 
   User.prototype.validatePassword = function validatePassword(password) {
     return bcrypt.compareSync(password, this.password);
+  };
+
+  User.prototype.checkLastPasswordChange = function checkLastPasswordChange(
+    jwtTimestamp,
+  ) {
+    if (this.password_last_changed) {
+      const lastPasswordChange = this.password_last_changed.getTime() / 1000;
+
+      // false indicates that JWT was issued after last password change and thus is valid
+      return jwtTimestamp < lastPasswordChange;
+    }
+    return false;
   };
 
   User.prototype.generatePasswordResetToken = async function generatePasswordResetToken() {
