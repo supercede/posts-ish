@@ -71,7 +71,7 @@ module.exports = {
 
     const posts = await pagination(Post, query, queryOptions);
 
-    return response.status(201).json({
+    return response.status(200).json({
       status: 'success',
       message: 'Posts fetched successfully',
       count: posts.count,
